@@ -2,10 +2,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/videoSurfaceContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rq.videoplayer_faydee.MainActivity"
-    android:id="@+id/videoSurfaceContainer">
+    android:background="@android:color/white"
+    tools:context="com.rq.videoplayer_faydee.MainActivity">
 
     <FrameLayout
         android:id="@+id/backgroundFrameLayout"

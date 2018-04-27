@@ -17,6 +17,7 @@
 package com.rq.videoplayer_faydee;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -299,6 +300,7 @@ public class VideoControllerView extends FrameLayout {
         mHandler.sendEmptyMessage(SHOW_PROGRESS);
 
         Message msg = mHandler.obtainMessage(FADE_OUT);
+
         if (timeout != 0) {
             mHandler.removeMessages(FADE_OUT);
             mHandler.sendMessageDelayed(msg, timeout);
@@ -487,6 +489,7 @@ public class VideoControllerView extends FrameLayout {
         }
         
         mPlayer.toggleFullScreen();
+        updateFullScreen();
     }
 
     // There are two scenarios that can trigger the seekbar listener to trigger:

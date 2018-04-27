@@ -1,5 +1,7 @@
 package com.rq.videoplayer_faydee;
 
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -28,14 +30,13 @@ public class MainActivity extends AppCompatActivity implements
         private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
 //    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/protraitVideo.mp4";
 
-//    private VideoView mVideoView;
-//    private MediaController mMediaController;
-
     private SurfaceView mSurfaceView;
     private MediaPlayer mMediaPlayer;
     private VideoControllerView mVideoControllerView;
 
     private FrameLayout mBackgroundFrameLayout;
+
+    private boolean mIsFullScreen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,17 +44,6 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         mBackgroundFrameLayout = findViewById(R.id.backgroundFrameLayout);
 
-        // 舊寫法
-//        mVideoView = findViewById(R.id.videoView);
-
-//        mMediaController = new MediaController(this);
-//        mMediaController.setAnchorView(mVideoView);
-//        mVideoView.setMediaController(mMediaController);
-
-//        mVideoView.setVideoURI(Uri.parse(mVideoUrl));
-//        mVideoView.start();
-
-        // 測試
         mSurfaceView = findViewById(R.id.videoSurface);
         SurfaceHolder videoHolder = mSurfaceView.getHolder();
         videoHolder.addCallback(this);
@@ -62,6 +52,28 @@ public class MainActivity extends AppCompatActivity implements
         mVideoControllerView = new VideoControllerView(this);
 
         playVideo();
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Log.d(TAG, "onCreate orientation: PORTRAIT");
+            mIsFullScreen = false;
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.d(TAG, "onConfigurationChanged");
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            //橫屏
+            Log.d(TAG, "LANDSCAPE");
+            mIsFullScreen = true;
+            mVideoControllerView.updateFullScreen();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            //豎屏
+            Log.d(TAG, "PORTRAIT");
+            mIsFullScreen = false;
+            mVideoControllerView.updateFullScreen();
+        }
     }
 
     private void playVideo() {
@@ -122,7 +134,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+//        if (!mVideoControllerView.isShowing()) {
+//            mVideoControllerView.show();
+//        } else {
+//            mVideoControllerView.hide();
+//        }
         mVideoControllerView.show();
+
         return false;
     }
 
@@ -132,6 +150,11 @@ public class MainActivity extends AppCompatActivity implements
         mVideoControllerView.setMediaPlayer(this);
         mVideoControllerView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
         mMediaPlayer.start();
+
+        // 直向時維持顯示播放控制器
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mVideoControllerView.show(0);
+        }
     }
 
     @Override
@@ -202,12 +225,17 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean isFullScreen() {
-        return false;
+        Log.d(TAG, "isFullScreen: " + String.valueOf(mIsFullScreen));
+        return mIsFullScreen;
     }
 
     @Override
     public void toggleFullScreen() {
-
+        if (!mIsFullScreen) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
     @Override
