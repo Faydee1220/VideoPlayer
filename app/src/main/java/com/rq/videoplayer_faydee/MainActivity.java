@@ -26,8 +26,9 @@ public class MainActivity extends AppCompatActivity implements
         VideoControllerView.MediaPlayerControl {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String KEY_IS_FULLSCREEN = "KEY_IS_FULLSCREEN";
 
-        private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
+    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
 //    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/protraitVideo.mp4";
 
     private SurfaceView mSurfaceView;
@@ -74,6 +75,22 @@ public class MainActivity extends AppCompatActivity implements
             mIsFullScreen = false;
             mVideoControllerView.updateFullScreen();
         }
+    }
+
+    // 轉向時會先呼叫 onSaveInstanceState，再呼叫 onRestoreInstanceState
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+//        Log.d(TAG, "onSaveInstanceState");
+        // 使用 key-value 型態來傳遞資料
+        outState.putBoolean(KEY_IS_FULLSCREEN, mIsFullScreen);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+//        Log.d(TAG, "onRestoreInstanceState");
+        mIsFullScreen = savedInstanceState.getBoolean(KEY_IS_FULLSCREEN);
     }
 
     private void playVideo() {
@@ -225,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean isFullScreen() {
-        Log.d(TAG, "isFullScreen: " + String.valueOf(mIsFullScreen));
+//        Log.d(TAG, "isFullScreen: " + String.valueOf(mIsFullScreen));
         return mIsFullScreen;
     }
 
