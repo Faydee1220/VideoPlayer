@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final String KEY_IS_FULLSCREEN = "KEY_IS_FULLSCREEN";
     private static final String KEY_CURRENTPOSITION = "KEY_CURRENTPOSITION";
     private static final String KEY_IS_PAUSE = "KEY_IS_PAUSE";
+    private static final String KEY_BUFFER_PERCENT = "KEY_BUFFER_PERCENT";
 
     private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
 //    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/protraitVideo.mp4";
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements
     private boolean mIsFullScreen = false;
     private int mCurrentPosition;
     private boolean mIsPause = false;
+    private int mBufferPercent;
     private int mPreOrientation;
 
     @Override
@@ -75,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements
             mIsFullScreen = true;
         }
 
+        setBufferListener();
+
         OrientationEventListener orientationEventListener = new OrientationEventListener(this) {
             @Override
             public void onOrientationChanged(int orientation) {
@@ -91,6 +95,14 @@ public class MainActivity extends AppCompatActivity implements
         orientationEventListener.enable();
     }
 
+    private void setBufferListener() {
+        mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                mBufferPercent = percent;
+            }
+        });
+    }
 
 
     @Override
@@ -123,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements
         outState.putBoolean(KEY_IS_FULLSCREEN, mIsFullScreen);
         outState.putInt(KEY_CURRENTPOSITION, mMediaPlayer.getCurrentPosition());
         outState.putBoolean(KEY_IS_PAUSE, mIsPause);
+        outState.putInt(KEY_BUFFER_PERCENT, mBufferPercent);
     }
 
     @Override
@@ -132,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements
         mIsFullScreen = savedInstanceState.getBoolean(KEY_IS_FULLSCREEN);
         mCurrentPosition = savedInstanceState.getInt(KEY_CURRENTPOSITION);
         mIsPause = savedInstanceState.getBoolean(KEY_IS_PAUSE);
+        mBufferPercent = savedInstanceState.getInt(KEY_BUFFER_PERCENT);
     }
 
     private void playVideo() {
@@ -272,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public int getBufferPercentage() {
-        return 0;
+        return mBufferPercent;
     }
 
     @Override
