@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">VideoPlayer - Faydee</string>
+    <string name="description">default content description</string>
 </resources>
