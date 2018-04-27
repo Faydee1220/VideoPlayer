@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements
     private int mCurrentPosition;
     private boolean mIsPause = false;
     private int mBufferPercent;
-    private int mPreOrientation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,17 +77,23 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         setBufferListener();
+        setOrientationListener();
+    }
 
+    private void setOrientationListener() {
         OrientationEventListener orientationEventListener = new OrientationEventListener(this) {
             @Override
             public void onOrientationChanged(int orientation) {
                 // 0 portrait
-                // 270 landscape
 //                int leftLandscape = 90;
 //                int rightLandscape = 270;
                 Log.d(TAG, "onOrientationChanged: " + String.valueOf(orientation));
-                mPreOrientation = orientation;
-//                if (mIsFullScreen)
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                if (orientation == 90 || orientation == 270) {
+                    mIsFullScreen = true;
+                } else {
+                    mIsFullScreen = false;
+                }
             }
 
         };
