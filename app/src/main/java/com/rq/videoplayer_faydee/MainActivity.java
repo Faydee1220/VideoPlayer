@@ -88,14 +88,14 @@ public class MainActivity extends AppCompatActivity implements
 //                int leftLandscape = 90;
 //                int rightLandscape = 270;
                 Log.d(TAG, "onOrientationChanged: " + String.valueOf(orientation));
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                mMediaPlayer.pause();
+//                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                 if (orientation == 90 || orientation == 270) {
                     mIsFullScreen = true;
                 } else {
                     mIsFullScreen = false;
                 }
             }
-
         };
         orientationEventListener.enable();
     }
@@ -346,6 +346,5 @@ public class MainActivity extends AppCompatActivity implements
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.TRANSPARENT);//calculateStatusColor(Color.WHITE, (int) alphaValue)
-
     }
 }
