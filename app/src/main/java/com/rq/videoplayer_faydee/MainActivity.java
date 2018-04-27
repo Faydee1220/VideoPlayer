@@ -1,5 +1,6 @@
 package com.rq.videoplayer_faydee;
 
+import android.app.FragmentTransaction;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String KEY_IS_FULLSCREEN = "KEY_IS_FULLSCREEN";
+    private static final String KEY_CURRENTPOSITION = "KEY_CURRENTPOSITION";
+    private static final String KEY_IS_PAUSE = "KEY_IS_PAUSE";
 
     private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
 //    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/protraitVideo.mp4";
@@ -38,11 +41,14 @@ public class MainActivity extends AppCompatActivity implements
     private FrameLayout mBackgroundFrameLayout;
 
     private boolean mIsFullScreen = false;
+    private int mCurrentPosition;
+    private boolean mIsPause = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mBackgroundFrameLayout = findViewById(R.id.backgroundFrameLayout);
 
         mSurfaceView = findViewById(R.id.videoSurface);
@@ -52,7 +58,9 @@ public class MainActivity extends AppCompatActivity implements
         mMediaPlayer = new MediaPlayer();
         mVideoControllerView = new VideoControllerView(this);
 
-        playVideo();
+        if (mCurrentPosition == 0) {
+            playVideo();
+        }
 
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             Log.d(TAG, "onCreate orientation: PORTRAIT");
@@ -64,11 +72,15 @@ public class MainActivity extends AppCompatActivity implements
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Log.d(TAG, "onConfigurationChanged");
+
+        mMediaPlayer.pause();
+
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             //橫屏
             Log.d(TAG, "LANDSCAPE");
             mIsFullScreen = true;
             mVideoControllerView.updateFullScreen();
+
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             //豎屏
             Log.d(TAG, "PORTRAIT");
@@ -84,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements
 //        Log.d(TAG, "onSaveInstanceState");
         // 使用 key-value 型態來傳遞資料
         outState.putBoolean(KEY_IS_FULLSCREEN, mIsFullScreen);
+        outState.putInt(KEY_CURRENTPOSITION, mMediaPlayer.getCurrentPosition());
+        outState.putBoolean(KEY_IS_PAUSE, mIsPause);
     }
 
     @Override
@@ -91,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onRestoreInstanceState(savedInstanceState);
 //        Log.d(TAG, "onRestoreInstanceState");
         mIsFullScreen = savedInstanceState.getBoolean(KEY_IS_FULLSCREEN);
+        mCurrentPosition = savedInstanceState.getInt(KEY_CURRENTPOSITION);
+        mIsPause = savedInstanceState.getBoolean(KEY_IS_PAUSE);
     }
 
     private void playVideo() {
@@ -157,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements
 //            mVideoControllerView.hide();
 //        }
         mVideoControllerView.show();
-
         return false;
     }
 
@@ -176,28 +191,36 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        Log.d(TAG, "surfaceCreated");
         mMediaPlayer.setDisplay(holder);
         mMediaPlayer.prepareAsync();
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+        if (mCurrentPosition != 0){
+            mMediaPlayer.seekTo(mCurrentPosition);
+            if (mIsPause) {
+                mMediaPlayer.pause();
+            }
+        }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        Log.d(TAG, "surfaceDestroyed");
     }
 
     @Override
     public void start() {
         mMediaPlayer.start();
+        mIsPause = false;
     }
 
     @Override
     public void pause() {
         mMediaPlayer.pause();
+        mIsPause = true;
     }
 
     @Override
@@ -217,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean isPlaying() {
-        return mMediaPlayer.isPlaying();
+        return !mIsPause;
     }
 
     @Override
@@ -242,12 +265,14 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean isFullScreen() {
-//        Log.d(TAG, "isFullScreen: " + String.valueOf(mIsFullScreen));
+//        Log.d(TAG, "isFullScreen: " + String.valueOf(isFullScreen));
         return mIsFullScreen;
     }
 
     @Override
     public void toggleFullScreen() {
+        mMediaPlayer.pause();
+
         if (!mIsFullScreen) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
