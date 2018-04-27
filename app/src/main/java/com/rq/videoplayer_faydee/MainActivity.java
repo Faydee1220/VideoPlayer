@@ -21,7 +21,7 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity implements
         SurfaceHolder.Callback,
         MediaPlayer.OnPreparedListener,
-        VideoControllerView.MediaPlayerControl, View.OnClickListener {
+        VideoControllerView.MediaPlayerControl {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements
 
         mMediaPlayer = new MediaPlayer();
         mVideoControllerView = new VideoControllerView(this);
-        mVideoControllerView.setPrevNextListeners(this, this);
 
         playVideo();
     }
@@ -212,7 +211,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onClick(View v) {
-
+    public void mute() {
+        mMediaPlayer.setVolume(0,0);
     }
+
+    @Override
+    public void unMute() {
+        mMediaPlayer.setVolume(1,1);
+    }
+
 }

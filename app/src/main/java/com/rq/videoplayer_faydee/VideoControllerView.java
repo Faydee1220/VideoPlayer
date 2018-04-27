@@ -96,6 +96,8 @@ public class VideoControllerView extends FrameLayout {
     private ImageButton         mNextButton;
     private ImageButton         mPrevButton;
     private ImageButton         mFullscreenButton;
+    private ImageButton         mMuteButton;
+    private boolean             mIsMute = false;
     private Handler             mHandler = new MessageHandler(this);
 
     public VideoControllerView(Context context, AttributeSet attrs) {
@@ -210,6 +212,8 @@ public class VideoControllerView extends FrameLayout {
             mPrevButton.setVisibility(View.GONE);
         }
 
+        mMuteButton = v.findViewById(R.id.muteButton);
+        mMuteButton.setOnClickListener(mMuteListener);
 
         mProgress = (ProgressBar) v.findViewById(R.id.mediacontroller_progress);
         if (mProgress != null) {
@@ -592,6 +596,22 @@ public class VideoControllerView extends FrameLayout {
         }
     };
 
+    private View.OnClickListener mMuteListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            if (!mIsMute) {
+                mIsMute = true;
+                mPlayer.mute();
+                mMuteButton.setImageResource(R.drawable.ic_medium_volume_mute);
+            } else {
+                mIsMute = false;
+                mPlayer.unMute();
+                mMuteButton.setImageResource(R.drawable.ic_medium_volume);
+            }
+
+            show(sDefaultTimeout);
+        }
+    };
+
     private View.OnClickListener mFfwdListener = new View.OnClickListener() {
         public void onClick(View v) {
             if (mPlayer == null) {
@@ -669,6 +689,8 @@ public class VideoControllerView extends FrameLayout {
         boolean canSeekForward();
         boolean isFullScreen();
         void    toggleFullScreen();
+        void    mute();
+        void    unMute();
     }
     
     private static class MessageHandler extends Handler {

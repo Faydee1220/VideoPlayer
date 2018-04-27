@@ -21,11 +21,10 @@
 
     <ImageButton
         android:id="@+id/fullscreen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:layout_gravity="top"
-        android:layout_marginStart="18dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="16dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/description"
         android:paddingBottom="4dip"
@@ -33,15 +32,15 @@
         android:paddingRight="4dip"
         android:paddingTop="4dip"
         app:layout_constraintStart_toEndOf="@+id/ffwd"
-        app:layout_constraintTop_toBottomOf="@+id/mediacontroller_progress"
+        app:layout_constraintTop_toTopOf="@+id/pause"
         app:srcCompat="@drawable/ic_media_fullscreen_stretch" />
 
     <ImageButton
         android:id="@+id/ffwd"
-        style="@android:style/MediaButton.Ffwd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="16dp"
+        android:background="@null"
         android:contentDescription="@string/description"
         app:layout_constraintStart_toEndOf="@+id/pause"
         app:layout_constraintTop_toTopOf="@+id/pause"
@@ -49,11 +48,11 @@
 
     <ImageButton
         android:id="@+id/pause"
-        style="@android:style/MediaButton.Play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:background="@null"
         android:contentDescription="@string/description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,10 +63,10 @@
 
     <ImageButton
         android:id="@+id/prev"
-        style="@android:style/MediaButton.Previous"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="16dp"
+        android:background="@null"
         android:contentDescription="@string/description"
         app:layout_constraintEnd_toStartOf="@+id/pause"
         app:layout_constraintTop_toTopOf="@+id/pause"
@@ -117,6 +116,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="01:37" />
+
+    <ImageButton
+        android:id="@+id/muteButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="16dp"
+        android:background="@null"
+        android:contentDescription="@string/description"
+        app:layout_constraintEnd_toStartOf="@+id/prev"
+        app:layout_constraintTop_toTopOf="@+id/pause"
+        app:srcCompat="@drawable/ic_medium_volume" />
 
     <!--<LinearLayout-->
     <!--android:layout_width="match_parent"-->
