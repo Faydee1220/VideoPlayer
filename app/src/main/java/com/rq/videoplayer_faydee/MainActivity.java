@@ -7,13 +7,17 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
@@ -43,10 +47,12 @@ public class MainActivity extends AppCompatActivity implements
     private boolean mIsFullScreen = false;
     private int mCurrentPosition;
     private boolean mIsPause = false;
+    private int mPreOrientation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStatusBar();
         setContentView(R.layout.activity_main);
 
         mBackgroundFrameLayout = findViewById(R.id.backgroundFrameLayout);
@@ -62,11 +68,30 @@ public class MainActivity extends AppCompatActivity implements
             playVideo();
         }
 
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Log.d(TAG, "onCreate orientation: PORTRAIT");
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            Log.d(TAG, "onCreate orientation: PORTRAIT");
             mIsFullScreen = false;
+        } else {
+            mIsFullScreen = true;
         }
+
+        OrientationEventListener orientationEventListener = new OrientationEventListener(this) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                // 0 portrait
+                // 270 landscape
+//                int leftLandscape = 90;
+//                int rightLandscape = 270;
+                Log.d(TAG, "onOrientationChanged: " + String.valueOf(orientation));
+                mPreOrientation = orientation;
+//                if (mIsFullScreen)
+            }
+
+        };
+        orientationEventListener.enable();
     }
+
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -186,12 +211,14 @@ public class MainActivity extends AppCompatActivity implements
         // 直向時維持顯示播放控制器
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             mVideoControllerView.show(0);
+        } else {
+            mVideoControllerView.show();
         }
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceCreated");
+//        Log.d(TAG, "surfaceCreated");
         mMediaPlayer.setDisplay(holder);
         mMediaPlayer.prepareAsync();
     }
@@ -208,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceDestroyed");
+//        Log.d(TAG, "surfaceDestroyed");
     }
 
     @Override
@@ -278,6 +305,9 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+
+        // TODO: Auto rotation 在使用過 setRequestedOrientation 後會失效，不會呼叫 onConfigurationChanged
+        // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
     }
 
     @Override
@@ -290,4 +320,13 @@ public class MainActivity extends AppCompatActivity implements
         mMediaPlayer.setVolume(1,1);
     }
 
+    private void setStatusBar() {
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.TRANSPARENT);//calculateStatusColor(Color.WHITE, (int) alphaValue)
+
+    }
 }
