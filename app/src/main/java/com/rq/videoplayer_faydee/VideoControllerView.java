@@ -147,7 +147,7 @@ public class VideoControllerView extends FrameLayout {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         );
-        
+
         removeAllViews();
         View v = makeControllerView();
         addView(v, frameParams);
@@ -182,6 +182,7 @@ public class VideoControllerView extends FrameLayout {
         }
 
         mFfwdButton = (ImageButton) v.findViewById(R.id.ffwd);
+        mFfwdButton.setImageResource(R.drawable.ic_media_fast_forward);
         if (mFfwdButton != null) {
             mFfwdButton.setOnClickListener(mFfwdListener);
             if (!mFromXml) {
@@ -189,23 +190,26 @@ public class VideoControllerView extends FrameLayout {
             }
         }
 
-        mRewButton = (ImageButton) v.findViewById(R.id.rew);
-        if (mRewButton != null) {
-            mRewButton.setOnClickListener(mRewListener);
-            if (!mFromXml) {
-                mRewButton.setVisibility(mUseFastForward ? View.VISIBLE : View.GONE);
-            }
-        }
+//        mRewButton = (ImageButton) v.findViewById(R.id.rew);
+//        if (mRewButton != null) {
+//            mRewButton.setOnClickListener(mRewListener);
+//            if (!mFromXml) {
+//                mRewButton.setVisibility(mUseFastForward ? View.VISIBLE : View.GONE);
+//            }
+//        }
 
         // By default these are hidden. They will be enabled when setPrevNextListeners() is called 
-        mNextButton = (ImageButton) v.findViewById(R.id.next);
-        if (mNextButton != null && !mFromXml && !mListenersSet) {
-            mNextButton.setVisibility(View.GONE);
-        }
+//        mNextButton = (ImageButton) v.findViewById(R.id.next);
+//        if (mNextButton != null && !mFromXml && !mListenersSet) {
+//            mNextButton.setVisibility(View.GONE);
+//        }
         mPrevButton = (ImageButton) v.findViewById(R.id.prev);
+        mPrevButton.setImageResource(R.drawable.ic_media_fast_rewind);
+        setPrevNextListeners(mFfwdListener, mFrwdListener);
         if (mPrevButton != null && !mFromXml && !mListenersSet) {
             mPrevButton.setVisibility(View.GONE);
         }
+
 
         mProgress = (ProgressBar) v.findViewById(R.id.mediacontroller_progress);
         if (mProgress != null) {
@@ -596,6 +600,26 @@ public class VideoControllerView extends FrameLayout {
             
             int pos = mPlayer.getCurrentPosition();
             pos += 15000; // milliseconds
+            mPlayer.seekTo(pos);
+            setProgress();
+
+            show(sDefaultTimeout);
+        }
+    };
+
+    private View.OnClickListener mFrwdListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            if (mPlayer == null) {
+                return;
+            }
+
+            int pos = mPlayer.getCurrentPosition();
+            if (pos > 15000) {
+                pos -= 15000; // milliseconds
+            } else {
+                pos = 0;
+            }
+
             mPlayer.seekTo(pos);
             setProgress();
 

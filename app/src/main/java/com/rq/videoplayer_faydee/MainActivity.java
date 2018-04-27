@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
@@ -20,7 +21,7 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity implements
         SurfaceHolder.Callback,
         MediaPlayer.OnPreparedListener,
-        VideoControllerView.MediaPlayerControl {
+        VideoControllerView.MediaPlayerControl, View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements
 
         mMediaPlayer = new MediaPlayer();
         mVideoControllerView = new VideoControllerView(this);
+        mVideoControllerView.setPrevNextListeners(this, this);
 
         playVideo();
     }
@@ -206,6 +208,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void toggleFullScreen() {
+
+    }
+
+    @Override
+    public void onClick(View v) {
 
     }
 }
