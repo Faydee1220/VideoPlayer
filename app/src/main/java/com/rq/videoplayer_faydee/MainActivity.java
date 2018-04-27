@@ -24,8 +24,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-//        private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
-    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/protraitVideo.mp4";
+        private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/taeyeon.mp4";
+//    private String mVideoUrl = "https://s3-ap-northeast-1.amazonaws.com/mid-exam/Video/protraitVideo.mp4";
 
 //    private VideoView mVideoView;
 //    private MediaController mMediaController;
@@ -60,11 +60,14 @@ public class MainActivity extends AppCompatActivity implements
         mMediaPlayer = new MediaPlayer();
         mVideoControllerView = new VideoControllerView(this);
 
+        playVideo();
+    }
+
+    private void playVideo() {
         try {
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setDataSource(this, Uri.parse(mVideoUrl));
             mMediaPlayer.setOnPreparedListener(this);
-
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -99,8 +102,6 @@ public class MainActivity extends AppCompatActivity implements
 
 //        Log.d(TAG, "lp.width: " + String.valueOf(lp.width));
 
-//        float height = (float) lp.height;
-
         // 調整直向影片寬高
         if (videoHeight > videoWidth) {
             int newHeight = (int) DPTool.convertDpToPixel(350, this);
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onPrepared(MediaPlayer mp) {
         setVideoSize();
         mVideoControllerView.setMediaPlayer(this);
-        mVideoControllerView.setAnchorView((RelativeLayout) findViewById(R.id.videoSurfaceContainer));
+        mVideoControllerView.setAnchorView((FrameLayout) findViewById(R.id.videoSurfaceContainer));
         mMediaPlayer.start();
     }
 

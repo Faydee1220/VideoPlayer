@@ -32,6 +32,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -123,6 +124,7 @@ public class VideoControllerView extends FrameLayout {
 
     @Override
     public void onFinishInflate() {
+        super.onFinishInflate();
         if (mRoot != null)
             initControllerView(mRoot);
     }
@@ -145,7 +147,7 @@ public class VideoControllerView extends FrameLayout {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         );
-
+        
         removeAllViews();
         View v = makeControllerView();
         addView(v, frameParams);
